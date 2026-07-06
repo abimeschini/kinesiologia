@@ -1,0 +1,546 @@
+:root {
+  --main: #A47DAB;
+  --main-dark: #6B516F;
+  --main-bg: #F6F2F7;
+
+  --stat-bg: #DE929F;
+  --stat-text: #BF4A5E;
+
+  --text-primary: #1F2328;
+  --text-secondary: #5B6169;
+  --text-muted: #8A9099;
+
+  --border: #E3E6E9;
+  --border-strong: #C9CED4;
+
+  --bg-page: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #F7F9FA;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* Header */
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+.topbar-title h1 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+.view-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  border: none;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.toggle-btn + .toggle-btn {
+  border-left: 1px solid var(--border);
+}
+
+.toggle-btn.active {
+  background: var(--main);
+  color: #FFFFFF;
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--stat-bg);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #FFFFFF;
+  margin: 0 0 4px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: #FFFFFF;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 2.25rem;
+}
+
+.section h2 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.section-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+
+.empty-msg {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 1rem;
+  background: var(--bg-subtle);
+  border-radius: 10px;
+}
+
+/* Materia cards (habilitadas) */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.materia-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--main);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+.materia-card .trayecto {
+  font-size: 12px;
+  color: var(--main-dark);
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.materia-card .nombre {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 10px;
+  line-height: 1.35;
+}
+
+.materia-card .codigo {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.estado-toggle-btn {
+  display: inline-block;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  margin-bottom: 10px;
+}
+
+.estado-toggle-btn:hover {
+  background: var(--bg-subtle);
+}
+
+/* Tarjeta marcada como "En curso" */
+.materia-card.en-curso {
+  background: var(--main);
+  border-left-color: var(--main-dark);
+}
+
+.materia-card.en-curso .trayecto,
+.materia-card.en-curso .nombre,
+.materia-card.en-curso .codigo {
+  color: #FFFFFF;
+}
+
+.materia-card.en-curso .estado-toggle-btn {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #FFFFFF;
+}
+
+.materia-card.en-curso .estado-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.materia-card.en-curso .nota-form input[type="number"] {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.materia-card.en-curso .nota-error {
+  color: #FFE1E1;
+}
+
+.nota-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nota-form input[type="number"] {
+  width: 64px;
+  height: 32px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.nota-form input[type="number"]:focus {
+  outline: none;
+  border-color: var(--main);
+  box-shadow: 0 0 0 2px var(--main-bg);
+}
+
+.nota-form button {
+  border: 1px solid var(--main);
+  background: var(--main);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nota-form button:hover {
+  background: var(--main-dark);
+  border-color: var(--main-dark);
+}
+
+.nota-error {
+  font-size: 11px;
+  color: #B23A3A;
+  margin: 4px 0 0;
+  min-height: 14px;
+}
+
+/* Listas tipo "próximas" (también usadas por aprobadas / desaprobadas) */
+.proximas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.proxima-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.proxima-item .nombre {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.proxima-item .faltantes {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.proxima-badge {
+  background: var(--main-bg);
+  color: var(--main-dark);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.item-controles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* Plan completo */
+.plan-completo-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.plan-completo-header h2 {
+  margin: 0;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--main-dark);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  text-decoration: underline;
+}
+
+.link-btn.danger {
+  color: #B23A3A;
+}
+
+.plan-completo {
+  margin-top: 1rem;
+}
+
+.trayecto-group {
+  margin-bottom: 1.25rem;
+}
+
+.trayecto-group h3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0 0 8px;
+  text-transform: none;
+}
+
+.plan-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.plan-row .plan-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plan-row .plan-row-nombre {
+  font-weight: 500;
+}
+
+.plan-row .plan-row-detalle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.estado-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.estado-aprobada {
+  background: var(--main-bg);
+  color: var(--main-dark);
+}
+
+.estado-en-curso {
+  background: var(--main);
+  color: #FFFFFF;
+}
+
+.estado-habilitada {
+  background: #EAF3DE;
+  color: #3B6D11;
+}
+
+.estado-bloqueada {
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+}
+
+.plan-row-nota,
+.item-nota {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plan-row-nota input[type="number"],
+.item-nota input[type="number"] {
+  width: 56px;
+  height: 28px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 0 6px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.plan-row-nota button,
+.item-nota button {
+  border: 1px solid var(--border-strong);
+  background: var(--bg-card);
+  font-size: 11px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.plan-row-nota button:hover,
+.item-nota button:hover {
+  background: var(--bg-subtle);
+}
+
+/* Footer */
+.footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 1.25rem 1rem 3rem;
+  }
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .stat-card {
+    padding: 0.7rem 0.6rem;
+  }
+  .stat-label {
+    font-size: 11px;
+  }
+  .stat-value {
+    font-size: 18px;
+  }
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .view-toggle {
+    width: 100%;
+  }
+  .toggle-btn {
+    flex: 1 1 0;
+    text-align: center;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .nota-form input[type="number"] {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    height: 40px;
+    font-size: 16px; /* evita el zoom automático de iOS al enfocar el input */
+  }
+  .nota-form button {
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 14px;
+  }
+  .proxima-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .proxima-badge {
+    align-self: flex-start;
+  }
+  .item-controles {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .plan-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .plan-row > div:last-child {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .plan-row-nota,
+  .item-nota {
+    flex: 1 1 auto;
+  }
+  .plan-row-nota input[type="number"],
+  .item-nota input[type="number"] {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    height: 36px;
+    font-size: 16px; /* evita el zoom automático de iOS al enfocar el input */
+  }
+  .plan-row-nota button,
+  .item-nota button {
+    height: 36px;
+  }
+  .footer {
+    text-align: left;
+  }
+}
+
+@media (max-width: 400px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}

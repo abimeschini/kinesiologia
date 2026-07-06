@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mi plan de estudios</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="page">
+
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1>Mi plan de estudios</h1>
+        <p id="subtitle" class="subtitle">Licenciatura en Kinesiología</p>
+      </div>
+
+      <div class="view-toggle" role="group" aria-label="Vista principal">
+        <button id="btn-vista-habilitadas" class="toggle-btn active" type="button">Habilitadas</button>
+        <button id="btn-vista-notas" class="toggle-btn" type="button">Notas cargadas</button>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="stat-card">
+        <p class="stat-label">Promedio general</p>
+        <p class="stat-value" id="stat-promedio">–</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Materias aprobadas</p>
+        <p class="stat-value" id="stat-aprobadas">0 / 0</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Plan completado</p>
+        <p class="stat-value" id="stat-porcentaje">0%</p>
+      </div>
+    </section>
+
+    <!-- Vista: materias habilitadas -->
+    <div id="vista-habilitadas">
+      <section class="section">
+        <h2>Materias habilitadas para cursar</h2>
+        <p class="section-hint">Estas son las materias en las que ya cumplís todas las correlativas.</p>
+        <div id="habilitadas-grid" class="cards-grid"></div>
+        <p id="habilitadas-empty" class="empty-msg" hidden>No tenés materias habilitadas por el momento.</p>
+      </section>
+
+      <section class="section">
+        <h2>Próximas a habilitarse</h2>
+        <p class="section-hint">Ordenadas por cuántas correlativas te faltan aprobar.</p>
+        <div id="proximas-list" class="proximas-list"></div>
+        <p id="proximas-empty" class="empty-msg" hidden>No hay materias pendientes por correlativas.</p>
+      </section>
+    </div>
+
+    <!-- Vista: notas cargadas -->
+    <div id="vista-notas" hidden>
+      <section class="section">
+        <h2>Materias aprobadas</h2>
+        <p class="section-hint">Podés editar la nota si te equivocaste al cargarla.</p>
+        <div id="aprobadas-list" class="proximas-list"></div>
+        <p id="aprobadas-empty" class="empty-msg" hidden>Todavía no aprobaste ninguna materia.</p>
+      </section>
+
+      <section class="section">
+        <h2>Finales desaprobados</h2>
+        <p class="section-hint">Cada intento suma al promedio general. También podés editar la nota si te equivocaste al cargarla.</p>
+        <div id="desaprobados-list" class="proximas-list"></div>
+        <p id="desaprobados-empty" class="empty-msg" hidden>Todavía no cargaste ningún intento desaprobado.</p>
+      </section>
+    </div>
+
+    <section class="section">
+      <div class="plan-completo-header">
+        <h2>Plan completo</h2>
+        <button id="btn-toggle-plan" class="link-btn" type="button">Mostrar plan completo</button>
+      </div>
+      <div id="plan-completo" class="plan-completo" hidden></div>
+    </section>
+
+    <footer class="footer">
+      <button id="btn-reset" class="link-btn danger" type="button">Borrar todas las notas cargadas</button>
+    </footer>
+
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
