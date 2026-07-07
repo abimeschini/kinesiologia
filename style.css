@@ -277,6 +277,14 @@ body {
   min-height: 14px;
 }
 
+.nota-error.nota-info {
+  color: var(--main-dark);
+}
+
+.materia-card.en-curso .nota-error.nota-info {
+  color: #FFFFFF;
+}
+
 /* Listas tipo "próximas" (también usadas por aprobadas / desaprobadas) */
 .proximas-list {
   display: flex;
