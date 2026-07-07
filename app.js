@@ -93,7 +93,7 @@ function guardarNotas() {
 // ---------------------------------------------------------------------
 
 // Carga una nota nueva (desde "Habilitadas" o desde "Plan completo").
-function registrarNota(codigo, nota) {
+function registrarNota(codigo, nota, opciones) {
   if (nota >= 4) {
     notas.aprobadas[codigo] = nota;
   } else {
@@ -101,14 +101,20 @@ function registrarNota(codigo, nota) {
     notas.intentos[codigo].push(nota);
   }
   guardarNotas();
-  renderTodo();
+  if (!opciones || !opciones.skipRender) {
+    renderTodo();
+  }
 }
 
 // Corrige la nota aprobatoria de una materia ya aprobada.
 // Si la corrección baja de 4, esa materia deja de estar aprobada y la
 // nota pasa a sumarse como un intento desaprobado.
+// Si la corrección es 0, se interpreta como "borrar esta nota" (la
+// materia vuelve a quedar sin nota cargada).
 function editarAprobada(codigo, nuevaNota) {
-  if (nuevaNota >= 4) {
+  if (nuevaNota === 0) {
+    delete notas.aprobadas[codigo];
+  } else if (nuevaNota >= 4) {
     notas.aprobadas[codigo] = nuevaNota;
   } else {
     delete notas.aprobadas[codigo];
@@ -122,8 +128,13 @@ function editarAprobada(codigo, nuevaNota) {
 // Corrige un intento desaprobado puntual (por índice dentro del arreglo).
 // Si la corrección sube a 4 o más, ese intento se elimina de la lista y
 // la materia pasa a estar aprobada con esa nota.
+// Si la corrección es 0, se borra ese intento puntual (la materia vuelve
+// a quedar sin ese intento cargado).
 function editarIntento(codigo, indice, nuevaNota) {
-  if (nuevaNota >= 4) {
+  if (nuevaNota === 0) {
+    notas.intentos[codigo].splice(indice, 1);
+    if (notas.intentos[codigo].length === 0) delete notas.intentos[codigo];
+  } else if (nuevaNota >= 4) {
     notas.intentos[codigo].splice(indice, 1);
     if (notas.intentos[codigo].length === 0) delete notas.intentos[codigo];
     notas.aprobadas[codigo] = nuevaNota;
@@ -134,12 +145,26 @@ function editarIntento(codigo, indice, nuevaNota) {
   renderTodo();
 }
 
+// Validación para cargar una nota NUEVA (desde "Habilitadas" o "Plan
+// completo"): entero entre 1 y 10.
 function validarNota(valorCrudo) {
   const val = String(valorCrudo).trim();
   if (val === "") return { error: "Ingresá una nota." };
   const num = Number(val);
   if (!Number.isInteger(num) || num < 1 || num > 10) {
     return { error: "La nota debe ser un número entero entre 1 y 10." };
+  }
+  return { num };
+}
+
+// Validación para EDITAR una nota ya cargada (desde "Notas cargadas"):
+// entero entre 1 y 10, o 0 para borrarla.
+function validarNotaEdicion(valorCrudo) {
+  const val = String(valorCrudo).trim();
+  if (val === "") return { error: "Ingresá una nota, o 0 para borrarla." };
+  const num = Number(val);
+  if (!Number.isInteger(num) || num < 0 || num > 10) {
+    return { error: "La nota debe ser un entero entre 1 y 10 (o 0 para borrarla)." };
   }
   return { num };
 }
@@ -258,7 +283,7 @@ function crearTarjetaHabilitada(materia) {
       error.textContent = resultado.error;
       return;
     }
-    registrarNota(materia.codigo, resultado.num);
+    animarAprobacionDesdeHabilitada(materia, card, resultado.num);
   };
 
   boton.addEventListener("click", guardar);
@@ -267,6 +292,54 @@ function crearTarjetaHabilitada(materia) {
   });
 
   return card;
+}
+
+// Registra la nota y anima la transición en la pantalla "Habilitadas":
+// la tarjeta que acaba de aprobarse se desvanece y, si con eso se
+// habilitó alguna correlativa, su tarjeta aparece con una animación de
+// entrada en la misma grilla.
+const DURACION_ANIMACION_MS = 320;
+
+function animarAprobacionDesdeHabilitada(materia, cardElement, nota) {
+  const prevHabilitadasCodigos = new Set(MATERIAS.filter(estaHabilitada).map((m) => m.codigo));
+
+  registrarNota(materia.codigo, nota, { skipRender: true });
+
+  // Actualizamos todo lo que no sea la grilla de habilitadas de forma normal.
+  renderStats();
+  renderProximas();
+  renderAprobadas();
+  renderDesaprobados();
+  renderPlanCompleto();
+
+  const grid = document.getElementById("habilitadas-grid");
+  const emptyMsg = document.getElementById("habilitadas-empty");
+
+  const nuevasHabilitadas = MATERIAS.filter(estaHabilitada);
+  const nuevosCodigos = nuevasHabilitadas
+    .map((m) => m.codigo)
+    .filter((cod) => !prevHabilitadasCodigos.has(cod));
+
+  // 1) Animar la salida de la tarjeta recién aprobada.
+  cardElement.classList.add("materia-card--saliendo");
+
+  window.setTimeout(() => {
+    cardElement.remove();
+
+    // 2) Insertar (con animación de entrada) las correlativas recién habilitadas.
+    nuevosCodigos.forEach((cod) => {
+      const nuevaMateria = MATERIAS.find((m) => m.codigo === cod);
+      const nuevaCard = crearTarjetaHabilitada(nuevaMateria);
+      nuevaCard.classList.add("materia-card--entrando");
+      grid.appendChild(nuevaCard);
+      // Forzamos reflow para que el navegador registre el estado inicial
+      // antes de sacarle la clase y disparar la transición de entrada.
+      void nuevaCard.offsetWidth;
+      nuevaCard.classList.remove("materia-card--entrando");
+    });
+
+    emptyMsg.hidden = grid.children.length > 0;
+  }, DURACION_ANIMACION_MS);
 }
 
 function renderProximas() {
@@ -308,13 +381,13 @@ function crearFormularioEdicion(valorActual, onGuardar) {
   const wrap = document.createElement("div");
   wrap.className = "item-nota";
   wrap.innerHTML = `
-    <input type="number" min="1" max="10" step="1" value="${valorActual}" />
+    <input type="number" min="0" max="10" step="1" value="${valorActual}" title="Podés poner 0 para borrar esta nota" />
     <button type="button">Guardar</button>
   `;
   const input = wrap.querySelector("input");
   const boton = wrap.querySelector("button");
   boton.addEventListener("click", () => {
-    const resultado = validarNota(input.value);
+    const resultado = validarNotaEdicion(input.value);
     if (resultado.error) {
       input.style.borderColor = "#B23A3A";
       input.title = resultado.error;

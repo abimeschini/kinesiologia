@@ -148,6 +148,19 @@ body {
   border-left: 3px solid var(--main);
   border-radius: 12px;
   padding: 0.9rem 1rem;
+  transition: opacity 0.32s ease, transform 0.32s ease;
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.materia-card--saliendo {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+.materia-card--entrando {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 .materia-card .trayecto {
